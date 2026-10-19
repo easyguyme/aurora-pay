@@ -89,24 +89,52 @@ so the whole thing restyles from one file.
 
 ## Getting started
 
+The repository is pinned to Node `22.12.0` and npm `10.9.0`. A clean install
+must use the committed lockfile:
+
 ```bash
-nvm use                # reads .nvmrc -> 22.12.0 (arm64)
-npm install
-npm run dev            # http://localhost:3000
-npm run build          # production build
-npm run typecheck      # tsc --noEmit
+nvm install             # installs the version from .nvmrc when needed
+nvm use                 # selects Node 22.12.0
+corepack enable         # activates the pinned npm version
+npm ci                  # reproducible dependency install
+cp .env.example .env.local
+npm run dev             # http://localhost:3000
 ```
 
-Requires Node 20.9+.
+The environment file currently contains only the public site origin. It has no
+secrets and can be used as-is for local development.
 
-> **Use a native arm64 Node.** Tailwind v4's `lightningcss` dependency ships
-> its native binary as a per-platform optional package, and npm picks it from
-> the *installing* Node's `process.arch` — not the host's real architecture.
-> Installing under an x64 Node running under Rosetta and then running under
-> arm64 (or vice versa) fails with
-> `Cannot find module '../lightningcss.darwin-arm64.node'`.
-> `scripts/check-native-deps.mjs` runs before `dev` and `build` and prints
-> the diagnosis and the fix instead of the raw module error.
+For a production build and local production server:
+
+```bash
+npm run build
+npm run start             # http://localhost:3000
+```
+
+The single project test command runs the typecheck and production build:
+
+```bash
+npm test
+```
+
+`lightningcss` uses a platform-specific optional package. The preflight check
+before `dev` and `build` accepts the correct GNU or musl package on Linux and
+prints an actionable reinstall command when `node_modules` was created for a
+different runtime.
+
+### Docker
+
+Docker provides the clean Linux build path and uses the same pinned Node
+runtime as `.nvmrc`:
+
+```bash
+docker build -t aurora-pay .
+docker run --rm --env-file .env.example -p 3000:3000 aurora-pay
+```
+
+Open <http://localhost:3000> after the container starts. The image does not
+contain local `node_modules`, `.next` output, git metadata, or real environment
+files.
 
 ## Tech stack
 

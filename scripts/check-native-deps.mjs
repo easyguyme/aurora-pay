@@ -3,10 +3,10 @@
  * Preflight check for native optional dependencies.
  *
  * `lightningcss` (pulled in by Tailwind v4's PostCSS plugin) ships its
- * native binary as a per-platform optional dependency, e.g.
- * `lightningcss-darwin-arm64`. npm picks that package using the
- * `process.arch` of the Node binary running the install — NOT the machine's
- * real architecture.
+ * native binary as a per-platform optional dependency. Linux packages also
+ * include a libc suffix, such as `lightningcss-linux-x64-gnu`. npm picks that
+ * package using the `process.arch` of the Node binary running the install —
+ * NOT the machine's real architecture.
  *
  * That means: install under an x64 Node running under Rosetta, then run under
  * an arm64 Node (or vice versa) and you get:
@@ -26,18 +26,30 @@ const projectRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 const platform = process.platform;
 const arch = process.arch;
-const pkg = `lightningcss-${platform}-${arch}`;
+
+const packageCandidates =
+  platform === "linux"
+    ? arch === "arm"
+      ? ["lightningcss-linux-arm-gnueabihf"]
+      : [
+          `lightningcss-linux-${arch}-gnu`,
+          `lightningcss-linux-${arch}-musl`,
+        ]
+    : [`lightningcss-${platform}-${arch}`];
 
 function findPackageDir() {
-  try {
-    // Resolve through the project's node_modules.
-    const pkgJson = require.resolve(`${pkg}/package.json`, {
-      paths: [projectRoot],
-    });
-    return dirname(pkgJson);
-  } catch {
-    return null;
+  for (const pkg of packageCandidates) {
+    try {
+      // Resolve through the project's node_modules.
+      const pkgJson = require.resolve(`${pkg}/package.json`, {
+        paths: [projectRoot],
+      });
+      return dirname(pkgJson);
+    } catch {
+      // Try the next libc variant on Linux.
+    }
   }
+  return null;
 }
 
 const dir = findPackageDir();
@@ -48,10 +60,7 @@ if (dir && existsSync(dir)) {
 
 // Not installed for this runtime. Work out why.
 const present = [];
-for (const candidate of [
-  `lightningcss-${platform}-x64`,
-  `lightningcss-${platform}-arm64`,
-]) {
+for (const candidate of packageCandidates) {
   const path = join(projectRoot, "node_modules", candidate);
   if (existsSync(path)) present.push(candidate);
 }
@@ -61,7 +70,7 @@ const lines = [
   `  Native dependency check failed.`,
   ``,
   `  This Node reports  platform=${platform}  arch=${arch}`,
-  `  Expected package: ${pkg}`,
+  `  Expected package: ${packageCandidates.join(" or ")}`,
   ``,
 ];
 
@@ -74,17 +83,11 @@ if (present.length > 0) {
     `  lightningcss's native binary from the *installing* Node's`,
     `  process.arch, not the host's real architecture.`,
     ``,
-    `  Fix — reinstall using a Node that matches this architecture:`,
+    `  Fix — reinstall using a Node that matches this platform and architecture:`,
     ``,
-    `    nvm use 22.12.0     # or 25.9.0 — both are arm64 on this machine`,
+    `    nvm use`,
     `    rm -rf node_modules`,
-    `    npm install`,
-    ``,
-    `  Check what your Node binaries actually are:`,
-    ``,
-    `    for d in ~/.nvm/versions/node/*/bin/node; do \\`,
-    `      printf "%-50s %s\\n" "$d" "$(file -b "$d" | cut -d' ' -f2)"; \\`,
-    `    done`,
+    `    npm ci`,
     ``,
   );
 } else {
@@ -93,7 +96,7 @@ if (present.length > 0) {
     ``,
     `  Fix:`,
     ``,
-    `    npm install`,
+    `    npm ci`,
     ``,
   );
 }

@@ -2,14 +2,19 @@
   "name": "aurora-pay",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.12.0",
+    "npm": "10.9.0"
+  },
+  "packageManager": "npm@10.9.0",
   "scripts": {
     "dev": "next dev",
     "predev": "node scripts/check-native-deps.mjs",
     "build": "next build",
     "prebuild": "node scripts/check-native-deps.mjs",
     "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "npm run typecheck && npm run build"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.3",

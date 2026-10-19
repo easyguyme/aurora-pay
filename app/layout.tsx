@@ -33,7 +33,9 @@ export const metadata: Metadata = {
   title: "Aurora Pay — Build with AI. Sell with Aurora.",
   description:
     "Aurora Pay is the money platform for the AI era. Sell software and digital products globally, with payments, taxes, payouts, affiliates, usage billing, conversion attribution and analytics handled for you.",
-  metadataBase: new URL("https://example.com"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  ),
   openGraph: {
     title: "Aurora Pay — Build with AI. Sell with Aurora.",
     description:
