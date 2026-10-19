@@ -435,7 +435,7 @@ export function SkillIllustration() {
       </div>
       <div className="flex items-center gap-1.5 rounded-lg bg-gray-900 px-2 py-1.5">
         <span className="font-mono text-[10px] text-white">&gt;_</span>
-        <span className="font-mono text-[9px] text-gray-400">creem create product</span>
+        <span className="font-mono text-[9px] text-gray-400">aurora create product</span>
       </div>
     </div>
   );

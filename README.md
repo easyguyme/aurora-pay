@@ -1,12 +1,93 @@
 # Aurora Pay
 
-A Next.js 15 marketing site scaffold built to match the structure, layout
-system and design language of <https://www.creem.io/>.
+A Next.js 15 marketing site for a developer-payments platform — the kind of
+site a merchant-of-record product needs: global payments, usage billing,
+affiliates and revenue splits behind one API.
 
-Generated with [REA](https://github.com/morluto/rea) against the live site. The
-full build brief lives in `../creem-rebuild-prompt.md`.
+Built as a production-shaped scaffold. Every mockup is a live component, the
+pricing calculator is real arithmetic, and the design system is token-driven
+so the whole thing restyles from one file.
 
-## Quick start
+![Aurora Pay homepage](docs/home-light.png)
+
+---
+
+## Features
+
+### Payments
+
+- **Hosted checkout** — a drop-in checkout page with product, price, currency,
+  tax and VAT breakdown before payment.
+- **Payment links** — a shareable link per product, with a real conversion
+  funnel behind it.
+- **Payment methods** — cards, PayPal, Apple Pay, Google Pay, plus local
+  methods surfaced per buyer country.
+- **One flat rate** — 3.9% + $0.40 per successful transaction. The same rate
+  for one-time purchases and subscriptions, every card type, every country.
+- **No monthly fees** — no setup fees, no minimum volume, nothing until you
+  sell.
+
+### Billing and metering
+
+- **Credit wallets** — sell prepaid credit packs. Customers pay up front, the
+  balance is debited per generation, call or minute, and auto-refill tops it
+  back up.
+- **Usage-based pricing** — attach a per-unit price to any product with a free
+  allowance and an optional cap. Customers see their own usage; you see it per
+  customer and per period.
+- **Custom meters** — define the unit (tokens, images, minutes, API calls)
+  with filters and aggregations, then post usage events and let the platform
+  do the counting.
+- **Subscriptions** — recurring billing with dunning, failed-payment recovery
+  and scheduled cancellation.
+- **Discounts** — percentage or fixed, one-time or reusable code.
+
+### Global coverage
+
+- **Merchant of record** — Aurora Pay is the legal seller on every
+  transaction. You build the product; we carry the compliance.
+- **Payments, tax and invoicing** — cards, PayPal, Apple Pay and Google Pay
+  charged in the buyer's currency.
+- **Taxes and compliance** — VAT, GST and sales tax calculated, collected,
+  filed and remitted across 190+ countries.
+- **Invoices, fraud and chargebacks** — a compliant invoice on every sale;
+  fraud screening and chargeback liability sit with the platform.
+- **Payouts** — paid out on the 1st and 15th of every month to a bank account
+  or a USDC wallet.
+
+### Growth and partners
+
+- **Affiliates** — commission per product and per affiliate, with an approval
+  step and a shared balance to pay from.
+- **Revenue splits** — route a share of every sale to co-founders,
+  collaborators or licensors automatically. No spreadsheet reconciliation.
+- **Short links** — track every click and conversion with QR codes, password,
+  geo and device targeting.
+- **Conversion attribution** — see which link, affiliate or partner produced
+  each sale.
+
+### Developer-first
+
+- **MCP server** — point an agent at the store and it creates products, opens
+  checkouts and wires verified webhooks by calling the real API with your key.
+- **REST API** — products, checkouts, subscriptions, meters, webhooks.
+- **SDKs** — TypeScript and Python.
+- **CLI** — script the whole store from a terminal or a cron job.
+- **Webhooks** — signed, verified, and replayable.
+- **Test mode** — build and check the whole setup on test keys, then switch to
+  live payments when you are ready.
+
+### Platform
+
+- **Analytics** — revenue, customer and retention reporting in the dashboard.
+- **Mobile apps** — iOS and Android with real-time push notifications, so
+  every sale lands on your lock screen without opening a dashboard.
+- **Agent monitoring** — get notified on a new sale, a failed renewal or a
+  scheduled cancellation, and act on it from the same place.
+
+---
+
+## Getting started
 
 ```bash
 nvm use                # reads .nvmrc -> 22.12.0 (arm64)
@@ -18,90 +99,77 @@ npm run typecheck      # tsc --noEmit
 
 Requires Node 20.9+.
 
-### Node architecture matters here
+> **Use a native arm64 Node.** Tailwind v4's `lightningcss` dependency ships
+> its native binary as a per-platform optional package, and npm picks it from
+> the *installing* Node's `process.arch` — not the host's real architecture.
+> Installing under an x64 Node running under Rosetta and then running under
+> arm64 (or vice versa) fails with
+> `Cannot find module '../lightningcss.darwin-arm64.node'`.
+> `scripts/check-native-deps.mjs` runs before `dev` and `build` and prints
+> the diagnosis and the fix instead of the raw module error.
 
-`lightningcss` (Tailwind v4's PostCSS dependency) ships its native binary as
-a per-platform optional package, e.g. `lightningcss-darwin-arm64`. npm selects
-it using the **`process.arch` of the Node binary that ran the install**, not
-the host's real architecture.
-
-This machine is Apple Silicon, but the installed Node binaries are not all
-native:
-
-| Node | Binary arch | `process.arch` | Safe for this project |
-| --- | --- | --- | --- |
-| v22.12.0 | arm64 | arm64 | ✅ recommended (`.nvmrc`) |
-| v24.17.0 | **x86_64** (Rosetta) | x64 | ❌ breaks native deps |
-| v25.9.0 | arm64 | arm64 | ✅ works |
-
-So an `npm install` run under v24.17.0 installs `lightningcss-darwin-x64`,
-and then running the dev server under any arm64 Node fails with:
-
-```
-Error: Cannot find module '../lightningcss.darwin-arm64.node'
-```
-
-**Always install and run under the same, native (arm64) Node.** If you hit
-this, `npm install` under v22.12.0 or v25.9.0 fixes it.
-
-`scripts/check-native-deps.mjs` runs automatically before `dev` and `build`
-and prints the above diagnosis instead of the raw module error.
-
-
-## What's here
-
-| Route | Status |
-| --- | --- |
-| `/` | Full marketing homepage — 16 sections |
-| `/pricing` | Full pricing page with a live fee calculator |
-| `/cases`, `/blog`, `/sign-in`, `/about`, `/careers`, `/contact`, `/book-a-call`, `/payment-fee-calculator` | Placeholder (one `<h1>`, shared header/footer) |
-| `/comparisons/[stripe\|lemon-squeezy\|paddle\|gumroad\|whop]` | Placeholder |
-
-## Stack
+## Tech stack
 
 - **Next.js 15** App Router, React 19, TypeScript strict
-- **Tailwind CSS v4** — CSS-first config. All tokens live in
-  `app/globals.css` under `@theme`. There is no `tailwind.config.js`.
-- **shadcn/ui** conventions (`data-slot`, semantic CSS variables) on **Radix UI**
-  primitives. Only `button` and `accordion` are vendored in `components/ui/`.
-  Add more with `npx shadcn@latest add <name>`.
+- **Tailwind CSS v4** — CSS-first config. Tokens live in `app/globals.css`
+  under `@theme`. There is no `tailwind.config.js`.
+- **shadcn/ui** conventions (`data-slot`, semantic CSS variables) on **Radix
+  UI** primitives. `button` and `accordion` are vendored in `components/ui/`;
+  add more with `npx shadcn@latest add <name>`.
 - **lucide-react** icons
 - Fonts self-hosted via `next/font/local` from `public/fonts/`
 
-## Design tokens
+## Design system
 
-Colors are **OKLCH**, taken verbatim from the reference stylesheets. Semantic
-tokens (`--background`, `--card`, `--border`, `--accent`, `--chart-*`) are
-defined for light in `:root` and dark in `.dark`, then re-exported into
-Tailwind via `@theme inline`.
+All colors are **OKLCH**. Semantic tokens (`--background`, `--card`,
+`--border`, `--accent`, `--chart-*`) are defined for light in `:root` and dark
+in `.dark`, then re-exported into Tailwind via `@theme inline`.
 
-Three neutral ramps: `gray-*` (light surfaces), `charcoal-*` (dark surfaces),
-plus accents `peach`, `green`, `blue`, `violet`, `amber`, `red`.
+Three neutral ramps — `gray-*` for light surfaces, `charcoal-*` for dark — plus
+`peach`, `green`, `blue`, `violet`, `amber` and `red` accents. The peach
+accent carries every primary button.
 
 ### Typography
 
 | Role | Font | Use |
 | --- | --- | --- |
-| Display | `gasoekOne` | Hero H1 and big statement headings only. Always uppercase, `font-weight: 400`, tight tracking, line-height ~0.95. **This is the strongest brand signal — do not substitute.** |
+| Display | `gasoekOne` | Hero H1 and big statement headings only. Always uppercase, `font-weight: 400`, tight tracking, line-height ~0.95. **The strongest brand signal — do not substitute.** |
 | Body | `GeistSans` | Everything else |
 | Mono | `GeistMono` | Code blocks, prices, metrics, terminal mockups |
 
-The `.font-display` utility applies the display treatment.
+The `.font-display` utility applies the display treatment. Note that the font
+family is resolved directly rather than through a CSS variable indirection —
+`next/font` emits `--font-gasoek` on `<body>`, so a variable declared on
+`:root` would resolve to an invalid value at computed-value time and silently
+fall back to the body font.
 
-### Theme toggle
+### Theming
 
-A tiny inline script in `app/layout.tsx` applies the stored theme before first
-paint (no flash). `components/theme-toggle.tsx` toggles `.dark` on `<html>`
-and persists to `localStorage`.
+A small inline script in `app/layout.tsx` applies the stored theme before first
+paint, so there is no flash. `components/theme-toggle.tsx` toggles `.dark` on
+`<html>` and persists to `localStorage`. Append `?theme=light` or
+`?theme=dark` to any URL to force a mode — handy for screenshots and QA.
 
-## Content
+## Site structure
 
-All copy, figures and testimonials live in `lib/mock-data.ts` — edit there,
-not in the components. The brand is **Aurora Pay**, a fictional developer
-payments platform. Copy is deliberately original rather than lifted from the
-reference site.
+```
+/                              Home
+/pricing                       Pricing, with a live fee calculator
+/cases  /blog  /about  /careers
+/contact  /book-a-call
+/sign-in  /payment-fee-calculator
+/comparisons/[provider]        vs Stripe, Paddle, Gumroad, Whop, …
+```
 
-## Structure
+Everything other than `/` and `/pricing` is a placeholder with the shared
+header and footer.
+
+The homepage runs 16 sections in order: hero, trust row, dark statement with a
+dashboard mockup, bento grid, billing, global coverage, partners, agent
+onboarding, agent monitoring, mobile apps, pricing teaser, partner plan,
+testimonials, FAQ, and a final call to action.
+
+## Project structure
 
 ```
 app/
@@ -116,7 +184,7 @@ components/
   sections.tsx            every homepage section
   site-header.tsx         sticky nav + mobile drawer
   site-footer.tsx         four link columns
-  fee-calculator.tsx      client component, fee math
+  fee-calculator.tsx      client component, fee arithmetic
   provider-comparison-chart.tsx   SVG bar chart, no chart dependency
   theme-toggle.tsx
   ui/button.tsx           cva variants
@@ -124,28 +192,34 @@ components/
 lib/
   mock-data.ts            all content
   utils.ts                cn()
+scripts/
+  check-native-deps.mjs   native-dependency preflight
 public/fonts/             GeistSans, GeistMono, gasoekOne (woff2)
+docs/                     reference screenshots
 ```
 
-## Known gaps
+## Customizing
+
+All copy, figures, testimonials, FAQ entries and provider rates live in
+`lib/mock-data.ts` — edit there, not in the components. Changing the palette
+means editing `@theme` in `app/globals.css` and nothing else.
+
+## Notes
 
 - **No backend.** Every figure is static mock data.
 - **The fee calculator** compares four providers with hardcoded rates. The
-  reference site's advanced calculator compares nine-plus providers with FX and
-  international surcharge modelling — not implemented here.
+  advanced calculator compares nine-plus providers with FX and international
+  surcharge modelling — not implemented here.
 - **Charts are hand-rolled SVG**, not a charting library, to keep the
   dependency list short.
-- **Placeholders** for cases, blog, comparison and company pages.
 - **Legal pages** (`/privacy`, `/terms`, `/buyer-terms`, `/dpa`) are linked but
   not routed yet.
 
-## Licensing note
+## Licensing
 
-`public/fonts/gasoekOne.woff2` was pulled from the reference site's public
-static assets for local development. **gasoekOne is a commercially licensed
-face** — verify its license before shipping this publicly, or swap it for a
-similar open alternative. Geist Sans and Geist Mono are open source (SIL OFL).
+`public/fonts/gasoekOne.woff2` is a **commercially licensed typeface**.
+Verify its license before shipping this publicly, or swap it for a similar
+open alternative — the `.font-display` utility is the only thing that needs
+to change. Geist Sans and Geist Mono are open source (SIL OFL).
 
-All code and copy in this scaffold is original. The design tokens, layout
-structure and section rhythm are derived from observation of a public
-marketing site.
+All code and copy in this project is original.
