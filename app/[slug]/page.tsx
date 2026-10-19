@@ -8,7 +8,6 @@ const TITLES: Record<string, string> = {
   "sign-in": "Sign in",
   "book-a-call": "Book a call",
   "payment-fee-calculator": "Fee calculator",
-  about: "About",
   careers: "Careers",
   contact: "Contact",
 };

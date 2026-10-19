@@ -154,20 +154,24 @@ paint, so there is no flash. `components/theme-toggle.tsx` toggles `.dark` on
 
 ```
 /                              Home
+/about                         Company story, principles, timeline and team
 /pricing                       Pricing, with a live fee calculator
-/cases  /blog  /about  /careers
+/cases  /blog  /careers
 /contact  /book-a-call
 /sign-in  /payment-fee-calculator
 /comparisons/[provider]        vs Stripe, Paddle, Gumroad, Whop, …
 ```
 
-Everything other than `/` and `/pricing` is a placeholder with the shared
-header and footer.
+Everything other than `/`, `/about` and `/pricing` is a placeholder with the
+shared header and footer.
 
 The homepage runs 16 sections in order: hero, trust row, dark statement with a
 dashboard mockup, bento grid, billing, global coverage, partners, agent
 onboarding, agent monitoring, mobile apps, pricing teaser, partner plan,
 testimonials, FAQ, and a final call to action.
+
+The about page runs eight: hero, stats strip, mission, principles, timeline,
+team, integrations, and a closing call to action.
 
 ## Project structure
 

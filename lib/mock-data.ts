@@ -328,3 +328,71 @@ export const providers = [
 ] as const;
 
 export const AVERAGE_ORDER_VALUE = 50;
+
+/* ------------------------------------------------------------------ */
+/* About page                                                          */
+/* ------------------------------------------------------------------ */
+
+export const aboutStats = [
+  { value: "190+", label: "countries supported" },
+  { value: "$2.4B", label: "processed to date" },
+  { value: "12,400", label: "developers building on it" },
+  { value: "99.99%", label: "checkout uptime" },
+] as const;
+
+export const aboutPrinciples = [
+  {
+    title: "Own the hard part",
+    body: "Tax, fraud, chargebacks and cross-border compliance are not features we bolted on. They are the product. If it is difficult, regulated or expensive, it belongs with us so it does not belong with you.",
+  },
+  {
+    title: "Ship before you sell",
+    body: "Everything in the dashboard is API and CLI first. An agent should be able to create a product, open a checkout and wire a webhook before a human has clicked publish.",
+  },
+  {
+    title: "Transparent by default",
+    body: "One rate on every successful sale. No monthly fees, no setup fees, no tier that hides the number you actually care about. If it costs money, it is on the page.",
+  },
+  {
+    title: "Boring on purpose",
+    body: "Money movement should be predictable and dull. We optimise for the boring parts working every time, not for the exciting part working most of the time.",
+  },
+] as const;
+
+export const aboutTimeline = [
+  {
+    year: "2023",
+    title: "Founded in Tallinn",
+    body: "Three engineers and one stubborn idea: that charging for software should not require becoming a payments company first.",
+  },
+  {
+    year: "2024",
+    title: "Merchant of record, live in 40 countries",
+    body: "We became the legal seller on every transaction and handled the tax, invoicing and chargeback work end to end.",
+  },
+  {
+    year: "2025",
+    title: "One flat rate, no monthly fees",
+    body: "We dropped subscription pricing entirely. One rate on every successful sale, the same for one-time purchases and subscriptions.",
+  },
+  {
+    year: "2026",
+    title: "Agents get a seat at the table",
+    body: "The MCP server, CLI and skills shipped, so an agent can run a store rather than just read about one.",
+  },
+] as const;
+
+export const aboutTeam = [
+  { name: "Ines Kask", role: "Co-founder & CEO", since: "2023" },
+  { name: "Ravi Menon", role: "Co-founder & CTO", since: "2023" },
+  { name: "Sofia Lindqvist", role: "Head of Compliance", since: "2024" },
+  { name: "Marcus Bell", role: "Head of Product", since: "2024" },
+  { name: "Aisha Okafor", role: "Head of Risk", since: "2025" },
+  { name: "Tomas Havel", role: "Head of Developer Experience", since: "2025" },
+] as const;
+
+export const aboutIntegrations = [
+  { label: "MCP clients", items: ["Claude Code", "Cursor", "Claude Desktop", "VS Code"] },
+  { label: "SDKs", items: ["TypeScript", "Python", "Go", "Ruby"] },
+  { label: "Rails", items: ["Stripe Connect", "Slack", "GitHub Apps", "Webhooks"] },
+] as const;
