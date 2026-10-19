@@ -9,13 +9,44 @@ full build brief lives in `../creem-rebuild-prompt.md`.
 ## Quick start
 
 ```bash
+nvm use                # reads .nvmrc -> 22.12.0 (arm64)
 npm install
-npm run dev          # http://localhost:3000
-npm run build        # production build
-npm run typecheck    # tsc --noEmit
+npm run dev            # http://localhost:3000
+npm run build          # production build
+npm run typecheck      # tsc --noEmit
 ```
 
-Requires Node 20.9+ (developed against Node 24).
+Requires Node 20.9+.
+
+### Node architecture matters here
+
+`lightningcss` (Tailwind v4's PostCSS dependency) ships its native binary as
+a per-platform optional package, e.g. `lightningcss-darwin-arm64`. npm selects
+it using the **`process.arch` of the Node binary that ran the install**, not
+the host's real architecture.
+
+This machine is Apple Silicon, but the installed Node binaries are not all
+native:
+
+| Node | Binary arch | `process.arch` | Safe for this project |
+| --- | --- | --- | --- |
+| v22.12.0 | arm64 | arm64 | ✅ recommended (`.nvmrc`) |
+| v24.17.0 | **x86_64** (Rosetta) | x64 | ❌ breaks native deps |
+| v25.9.0 | arm64 | arm64 | ✅ works |
+
+So an `npm install` run under v24.17.0 installs `lightningcss-darwin-x64`,
+and then running the dev server under any arm64 Node fails with:
+
+```
+Error: Cannot find module '../lightningcss.darwin-arm64.node'
+```
+
+**Always install and run under the same, native (arm64) Node.** If you hit
+this, `npm install` under v22.12.0 or v25.9.0 fixes it.
+
+`scripts/check-native-deps.mjs` runs automatically before `dev` and `build`
+and prints the above diagnosis instead of the raw module error.
+
 
 ## What's here
 

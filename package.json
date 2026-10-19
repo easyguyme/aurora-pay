@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "predev": "node scripts/check-native-deps.mjs",
     "build": "next build",
+    "prebuild": "node scripts/check-native-deps.mjs",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
